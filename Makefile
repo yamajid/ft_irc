@@ -1,29 +1,68 @@
-NAME = ircserv
+################################### IRC ###################################
 
-HEADER = server.hpp clients.hpp
+EXE := ircserv
+BEXE := ircbot
 
-SRCS = main.cpp server.cpp clients.cpp
+CPP := c++ -std=c++98
 
-CPP = c++ -std=c++98
+CPPFLAGS := -Wall -Wextra -Werror -MMD
 
-CFLAGS = -Wall -Wextra -Werror
+################################### SRCS ###################################
 
-OBJS = $(SRCS:.cpp=.o)
+DIR := ./Compiled
 
-all: $(NAME)
+FILES := ./Mandatory/src/client/client.cpp \
+         ./Mandatory/src/server/server.cpp \
+         ./Mandatory/src/server/utils.cpp \
+         ./Mandatory/src/channel/channel.cpp \
+         ./Mandatory/src/commands/additionalCommands.cpp \
+         ./Mandatory/src/commands/channelOpsCommands.cpp \
+         ./Mandatory/src/commands/joinCommand.cpp \
+         ./Mandatory/src/commands/authenticationCommands.cpp \
+         ./Mandatory/src/commands/modeCommand.cpp \
+         ./Mandatory/src/tools/parse.cpp \
+         ./Mandatory/src/tools/utils.cpp \
+         ./Mandatory/main.cpp
 
-$(NAME): $(OBJS)
-	$(CPP) $(CFLAGS) -o $(NAME) $(OBJS)
+BFILES := ./Bonus/src/bot.cpp \
+          ./Bonus/src/commands.cpp \
+          ./Bonus/src/tools.cpp \
+          ./Bonus/main.cpp
 
-%.o: %.cpp #$(HEADER)
-	$(CPP) $(CFLAGS) -c $< -o $@
+#############################################################################
+
+OBJ := $(FILES:%.cpp=$(DIR)/%.o)
+BOBJ := $(BFILES:%.cpp=$(DIR)/%.o)
+
+DEPS := $(OBJ:$(DIR)/%.o=$(DIR)/%.d) \
+        $(BOBJ:$(DIR)/%.o=$(DIR)/%.d)
+
+################################### RULES ###################################
+
+all: $(EXE)
+
+bonus: $(BEXE)
+
+$(EXE): $(OBJ)
+	$(CPP) $(CPPFLAGS) $(OBJ) -o $(EXE)
+
+$(BEXE): $(BOBJ)
+	$(CPP) $(CPPFLAGS) $(BOBJ) -o $(BEXE)
+
+$(DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CPP) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS)
+	rm -rf $(DIR)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -rf $(EXE) $(BEXE)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+-include $(DEPS)
+
+##############################################################################
+
+.PHONY: clean fclean re bonus

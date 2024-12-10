@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   clients.hpp                                        :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abberkac <abberkac@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/21 01:37:16 by abberkac          #+#    #+#             */
-/*   Updated: 2024/03/21 01:58:09 by abberkac         ###   ########.fr       */
+/*   Created: 2024/07/27 06:22:34 by abberkac          #+#    #+#             */
+/*   Updated: 2024/08/20 03:30:30 by abberkac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENTS_HPP
-#define CLIENTS_HPP
+#include "Inc/irc.hpp"
 
-class Clients {
-  private:
+int main(int ac, char **av)
+{
+    uint16_t port;
 
-    public:
-        Clients();
-        ~Clients();
+    if ((port = arg_checker(ac ,av)) != 1)
+    {
+        try {
+            Server srv(port, av[2]);
+            srv.createServer();
+        }
+        catch (std::exception &e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+    return 0;
 };
-
-#endif
